@@ -1,8 +1,11 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
+import pinia from "../store";
 import HomeView from "../views/HomeView.vue";
-import SignInView from "@/views/SignInView.vue";
+import LoginView from "@/views/LoginView.vue";
 import StoreView from "@/views/StoreView.vue";
+import useAuthStore from "@/store/useAuthStore";
+
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
@@ -10,16 +13,18 @@ const routes: Array<RouteConfig> = [
     path: "/",
     name: "home",
     component: HomeView,
+    beforeEnter: isAuthenticated,
   },
   {
     path: "/login",
     name: "login",
-    component: SignInView,
+    component: LoginView,
   },
   {
     path: "/store",
     name: "store",
     component: StoreView,
+    beforeEnter: isAuthenticated,
   },
   {
     path: "/about",
@@ -35,5 +40,9 @@ const routes: Array<RouteConfig> = [
 const router = new VueRouter({
   routes,
 });
-
+function isAuthenticated(to: any, from: any, next: any) {
+  const { isLogin } = useAuthStore(pinia);
+  if (to.name !== "login" && !isLogin()) next({ name: "login" });
+  else next();
+}
 export default router;

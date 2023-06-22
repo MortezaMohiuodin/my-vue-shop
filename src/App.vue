@@ -32,21 +32,22 @@
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
     </v-app-bar> -->
-
+    <v-btn @click.once="doLogout" width="200" v-if="isLogin()">Logout</v-btn>
     <v-main>
       <router-view />
     </v-main>
   </v-app>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import Vue from "vue";
+import { useRouter } from "vue-router/composables";
+import useAuthStore from "./store/useAuthStore";
 
-export default Vue.extend({
-  name: "App",
-
-  data: () => ({
-    //
-  }),
-});
+const router = useRouter();
+const { isLogin, logout } = useAuthStore();
+const doLogout = () => {
+  logout();
+  router.push({ name: "login" });
+};
 </script>

@@ -1,67 +1,98 @@
 <template>
-  <v-container>
-    <v-card class="mx-auto mt-4 px-3 py-4" max-width="500">
-      <v-form @submit.prevent>
+  <v-sheet
+    width="100%"
+    class="blue-grey lighten-5 d-flex align-center justify-center"
+    height="100vh"
+  >
+    <v-card class="mx-auto px-3 py-4" rounded width="350">
+      <v-form
+        @submit.prevent="handleSubmit"
+        v-model="isFormValid"
+        lazy-validation
+      >
         <v-text-field
-          v-model="user.username"
-          required
-          :label="$t('login.username')"
+          v-model="username"
+          :rules="[required, counter]"
+          :readonly="loading"
+          class="mb-2"
+          label="Username"
+          clearable
         />
         <v-text-field
-          v-model="user.password"
-          required
-          :label="$t('login.password')"
-          type="password"
+          v-model="password"
+          :rules="[required]"
+          :readonly="loading"
+          class="mb-2"
+          label="Password"
+          type="Password"
+          clearable
         />
-        <p class="red--text">{{ error }}</p>
-        <v-btn color="primary" @click="handleSubmit" :disabled="!isValid">
-          Submit
+        <v-btn
+          block
+          color="primary"
+          :loading="loading"
+          :disabled="!isFormValid"
+          type="submit"
+        >
+          {{ $t("login.submit") }}
         </v-btn>
       </v-form>
     </v-card>
-  </v-container>
+    <v-snackbar
+      v-model="snackbar"
+      timeout="2000"
+      top
+      rounded
+      min-height="50"
+      color="#FF5252"
+    >
+      {{ snackbarText }}
+    </v-snackbar>
+  </v-sheet>
 </template>
+
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { object, string } from "yup";
+import { ref } from "vue";
+import axios from "@/modules/axios";
+import { useRouter } from "vue-router/composables";
+import useAuthStore from "@/store/useAuthStore";
+const router = useRouter();
+const { setUser } = useAuthStore();
 
-const user = ref({
-  username: "",
-  password: "",
-});
-const isValid = ref(false);
-const error = ref("");
-let loginSchema = object({
-  username: string()
-    .required()
-    .min(8, "Username must be at least 8 characters long")
-    .max(12, "Username must be less than 12 characters long"),
-  password: string()
-    .required()
-    .min(8, "Password must be at least 8 characters long"),
-});
-
+const username = ref("");
+const password = ref("");
+const loading = ref(false);
+const isFormValid = ref(false);
+const snackbar = ref(false);
+const snackbarText = ref("");
 const handleSubmit = async () => {
+  if (!isFormValid.value) return;
+  loading.value = true;
   try {
-    await loginSchema.validate(user.value);
-    error.value = null;
-  } catch (err) {
-    error.value = err.errors[0];
+    const { data } = await axios.get(
+      `/users?username=${username.value}&password=${password.value}`
+    );
+    loading.value = false;
+    if (data && data.length) {
+      const user = data[0];
+      setUser({ id: user.id, username: user.username });
+      router.push({ name: "store", params: { id: user.id } });
+    } else {
+      snackbar.value = true;
+      snackbarText.value = "No user";
+    }
+  } catch (e) {
+    snackbar.value = true;
+    snackbarText.value = e.toString();
+    loading.value = false;
   }
 };
-
-watch(
-  user.value,
-  async () => {
-    try {
-      await loginSchema.validate(user.value);
-      isValid.value = true;
-    } catch (err) {
-      isValid.value = false;
-    }
-  },
-  {
-    immediate: true,
-  }
-);
+const required = (v: string) => {
+  return !!v || "Field is required";
+};
+const counter = (v: string) => {
+  return v.length < 8 || v.length > 12
+    ? "Characters must be between 8 and 12"
+    : true;
+};
 </script>
