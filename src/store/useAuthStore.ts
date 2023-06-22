@@ -1,11 +1,18 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-
+type User = {
+  id: number | null;
+  username: string;
+};
 const useAuthStore = defineStore("auth", () => {
-  const user = ref({
-    id: "1",
-    name: "morteza",
+  const user = ref<User>({
+    id: null,
+    username: "",
   });
-  return { user };
+  const setUser = ({ id, username }: User) => {
+    user.value.id = id;
+    user.value.username = username;
+  };
+  return { user, setUser };
 });
 export default useAuthStore;

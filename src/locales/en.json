@@ -1,3 +1,13 @@
 {
-  "message": "hello i18n !!"
+  "message": "hello i18n !!",
+  "login": {
+    "username": "Username",
+    "password": "Password",
+    "submit": "Submit",
+    "noUser": "User not found!"
+  },
+  "home": {
+    "totalPrice": "Total price",
+    "sendData": "Send data"
+  }
 }
