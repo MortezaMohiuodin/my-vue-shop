@@ -45,8 +45,8 @@ const handleSubmit = async (userData: UserLoginData) => {
   } catch (error) {
     snackbar.value = true;
     snackbarText.value = error?.errorType
-      ? t(`reqErrors.${error.errorType}`)
-      : t(`reqErrors.server`);
+      ? t(`messages.${error.errorType}`)
+      : t(`messages.serverError`);
     loading.value = false;
   }
 };

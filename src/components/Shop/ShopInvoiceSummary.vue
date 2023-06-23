@@ -4,7 +4,7 @@
       {{ $t("general.totalPrice") }} : {{ cartTotalPrice | price }}
     </div>
     <v-btn @click="handleSubmit" :loading="loading" :disabled="loading">{{
-      $t("general.sendData")
+      $t("general.purchase")
     }}</v-btn>
     <v-snackbar
       v-model="snackbar"

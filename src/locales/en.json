@@ -5,7 +5,9 @@
     "password": "Password",
     "submit": "Submit",
     "totalPrice": "Total price",
-    "sendData": "Send data"
+    "purchase": "Purchase",
+    "productName": "Product name",
+    "delete": "Delete"
   },
   "validation": {
     "required": "{label} field is required",
@@ -13,8 +15,8 @@
     "maxLength": "{label} field should be less than {max} characters"
   },
   "messages": {
-    "noUser": "User not found!",
-    "server": "Server error",
+    "noUserError": "User not found!",
+    "serverError": "Server error",
     "successPurchase": "Purchase was successful"
   }
 }

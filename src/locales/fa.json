@@ -1,15 +1,22 @@
 {
-  "login": {
+  "general": {
+    "logout": "خروج",
     "username": "نام کاربری",
-    "password": "Password",
+    "password": "رمز عبور",
     "submit": "ارسال",
-    "noUser": "کابری با مشخصات ارسالی یافت نشد"
-  },
-  "home": {
-    "totalPrice": "Total price",
-    "sendData": "Send data"
+    "totalPrice": "قیمت کل",
+    "purchase": "خرید",
+    "productName": "نام کالا",
+    "delete": "حذف"
   },
   "validation": {
-    "required": "فیلد {label} الزامی است"
+    "required": "فیلد {label} ضروری است",
+    "minLength": "فیلد {label} بایستی حداقل {min} کاراکتر باشد",
+    "maxLength": "فیلد {label} بایستی حداکثر {max} کاراکتر باشد"
+  },
+  "messages": {
+    "noUserError": "کاربری یافت نشد",
+    "serverError": "خطای سرور",
+    "successPurchase": "خرید با موفقیت انجام شد"
   }
 }

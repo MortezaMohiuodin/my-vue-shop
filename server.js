@@ -13,7 +13,7 @@ server.post("/login", (req, res) => {
   if (username === "username12" && password === "password") {
     res.status(200).jsonp({ id: 1, username });
   } else {
-    res.status(500).jsonp({ errorType: "noUser" });
+    res.status(500).jsonp({ errorType: "noUserError" });
   }
 });
 
