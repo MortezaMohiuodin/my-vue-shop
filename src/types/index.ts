@@ -32,3 +32,7 @@ export interface Invoice {
   items: Array<InvoiceItem>;
   totalPrice: number;
 }
+export type UserLoginData = {
+  username: string;
+  password: string;
+};
