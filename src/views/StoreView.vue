@@ -1,8 +1,8 @@
 <template>
-  <v-sheet class="d-flex align-center justify-center" min-height="100vh">
+  <v-container>
     <v-card
-      class="mx-auto"
-      min-width="400"
+      class="mx-auto mt-6"
+      max-width="400"
       tile
       :loading="loading"
       min-height="100"
@@ -10,7 +10,7 @@
       <v-list-item
         v-for="store in stores"
         :key="store.id"
-        @click.once="handleClick(store)"
+        @click="handleClick(store)"
         style="cursor: pointer"
       >
         <v-list-item-content>
@@ -18,35 +18,43 @@
         </v-list-item-content>
       </v-list-item>
     </v-card>
-  </v-sheet>
+  </v-container>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
+import { useRouter } from "vue-router/composables";
+
 import useShopStore from "@/store/useShopStore";
 import useAuthStore from "@/store/useAuthStore";
-import axios from "@/modules/axios";
-import { useRoute, useRouter } from "vue-router/composables";
+import { fetchStores } from "@/services";
+import type { Store } from "@/types";
 
-const route = useRoute();
 const router = useRouter();
+
 const { setShop } = useShopStore();
 const { user } = useAuthStore();
-const stores = ref([]);
-const loading = ref(true);
 
-onMounted(async () => {
+const stores = ref<Store[]>([]);
+const loading = ref(false);
+
+const getStores = async () => {
+  const id = user.id;
+  loading.value = true;
+
   try {
-    const id = route.params.id || user.id;
-    const { data } = await axios.get(`/stores?userId=${id}`);
-    stores.value = data;
     loading.value = false;
+    const data = await fetchStores(id);
+    stores.value = data;
   } catch (e) {
     alert(e);
     loading.value = false;
   }
-});
-const handleClick = (store) => {
+};
+
+const handleClick = (store: Store) => {
   setShop(store);
   router.push({ name: "home" });
 };
+
+getStores();
 </script>

@@ -1,9 +1,5 @@
 <template>
-  <v-sheet
-    width="100%"
-    class="blue-grey lighten-5 d-flex align-center justify-center"
-    height="100vh"
-  >
+  <v-container>
     <v-card class="mx-auto px-3 py-4" rounded width="350">
       <v-form
         @submit.prevent="handleSubmit"
@@ -12,18 +8,22 @@
       >
         <v-text-field
           v-model="username"
-          :rules="[required, counter]"
+          :rules="[
+            required(username, $t('general.username')),
+            minLength(username, 8, $t('general.username')),
+            maxLength(username, 12, $t('general.username')),
+          ]"
           :readonly="loading"
           class="mb-2"
-          label="Username"
+          :label="$t('general.username')"
           clearable
         />
         <v-text-field
           v-model="password"
-          :rules="[required]"
+          :rules="[required(password, $t('general.password'))]"
           :readonly="loading"
           class="mb-2"
-          label="Password"
+          :label="$t('general.password')"
           type="Password"
           clearable
         />
@@ -34,7 +34,7 @@
           :disabled="!isFormValid"
           type="submit"
         >
-          {{ $t("login.submit") }}
+          {{ $t("general.submit") }}
         </v-btn>
       </v-form>
     </v-card>
@@ -48,51 +48,48 @@
     >
       {{ snackbarText }}
     </v-snackbar>
-  </v-sheet>
+  </v-container>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import axios from "@/modules/axios";
 import { useRouter } from "vue-router/composables";
+import { useI18n } from "vue-i18n-composable";
+import { LocaleMessage } from "vue-i18n";
+
+import { loginUser } from "@/services";
 import useAuthStore from "@/store/useAuthStore";
+import { required, minLength, maxLength } from "@/utils/validations";
+
 const router = useRouter();
+const { t } = useI18n();
 const { setUser } = useAuthStore();
 
-const username = ref("");
-const password = ref("");
-const loading = ref(false);
-const isFormValid = ref(false);
-const snackbar = ref(false);
-const snackbarText = ref("");
+const username = ref<string>("");
+const password = ref<string>("");
+const loading = ref<boolean>(false);
+const isFormValid = ref<boolean>(false);
+const snackbar = ref<boolean>(false);
+const snackbarText = ref<string | LocaleMessage>("");
+
 const handleSubmit = async () => {
   if (!isFormValid.value) return;
   loading.value = true;
+  const payload = {
+    username: username.value,
+    password: password.value,
+  };
   try {
-    const { data } = await axios.get(
-      `/users?username=${username.value}&password=${password.value}`
-    );
+    const data = await loginUser(payload);
     loading.value = false;
-    if (data && data.length) {
-      const user = data[0];
-      setUser({ id: user.id, username: user.username });
-      router.push({ name: "store", params: { id: user.id } });
-    } else {
-      snackbar.value = true;
-      snackbarText.value = "No user";
-    }
-  } catch (e) {
+    setUser({ id: data.id, username: data.username });
+    router.push({ name: "store" });
+  } catch (error) {
     snackbar.value = true;
-    snackbarText.value = e.toString();
+    snackbarText.value = error?.errorType
+      ? t(`reqErrors.${error.errorType}`)
+      : t(`reqErrors.server`);
     loading.value = false;
   }
-};
-const required = (v: string) => {
-  return !!v || "Field is required";
-};
-const counter = (v: string) => {
-  return v.length < 8 || v.length > 12
-    ? "Characters must be between 8 and 12"
-    : true;
 };
 </script>

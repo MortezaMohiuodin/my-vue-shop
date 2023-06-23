@@ -1,3 +1,15 @@
 {
-  "message": "سلام"
+  "login": {
+    "username": "نام کاربری",
+    "password": "Password",
+    "submit": "ارسال",
+    "noUser": "کابری با مشخصات ارسالی یافت نشد"
+  },
+  "home": {
+    "totalPrice": "Total price",
+    "sendData": "Send data"
+  },
+  "validation": {
+    "required": "فیلد {label} الزامی است"
+  }
 }

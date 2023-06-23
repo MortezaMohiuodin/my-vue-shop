@@ -1,13 +1,20 @@
 {
-  "message": "hello i18n !!",
-  "login": {
+  "general": {
+    "logout": "Logout",
     "username": "Username",
     "password": "Password",
     "submit": "Submit",
-    "noUser": "User not found!"
-  },
-  "home": {
     "totalPrice": "Total price",
     "sendData": "Send data"
+  },
+  "validation": {
+    "required": "{label} field is required",
+    "minLength": "{label} field should be at least {min} characters",
+    "maxLength": "{label} field should be less than {max} characters"
+  },
+  "messages": {
+    "noUser": "User not found!",
+    "server": "Server error",
+    "successPurchase": "Purchase was successful"
   }
 }
